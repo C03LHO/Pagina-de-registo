@@ -53,13 +53,100 @@
       <div class="row">
         <label class="flex-item">
           <span>Cidade</span>
-          <input type="text" name="city" placeholder="Sua cidade" required />
+          <input
+            type="text"
+            name="city"
+            value="Parauapebas"
+            readonly
+            required
+          />
         </label>
-        <label class="flex-item">
-          <span>Bairro</span>
-          <input type="text" name="neighborhood" placeholder="Seu bairro" required />
-        </label>
-      </div>
+        <label class="flex-item required-field">
+            <span>Bairro</span>
+            <select name="neighborhood" required>
+              <option value="">Selecione seu bairro</option>
+              <option>Altamira</option>
+              <option>Amazônia</option>
+              <option>Apoema</option>
+              <option>Bairro da Paz</option>
+              <option>Bairro dos Minérios</option>
+              <option>Bela Vista</option>
+              <option>Beira Rio I</option>
+              <option>Beira Rio II</option>
+              <option>Betânia</option>
+              <option>Bom Jardim</option>
+              <option>Caetanópolis</option>
+              <option>Carajás</option>
+              <option>Casas Populares I</option>
+              <option>Casas Populares II</option>
+              <option>Cidade Jardim</option>
+              <option>Cidade Nova</option>
+              <option>Cinco Estrelas</option>
+              <option>Chácara da Lua</option>
+              <option>Chácara das Estrelas</option>
+              <option>Chácara do Sol</option>
+              <option>Esperança</option>
+              <option>Esplanada</option>
+              <option>Guanabara</option>
+              <option>Guanabara II</option>
+              <option>Ipiranga</option>
+              <option>Ipiranga II</option>
+              <option>Jardim América</option>
+              <option>Jardim América II</option>
+              <option>Jardim Canadá</option>
+              <option>Jardim Canadá II</option>
+              <option>Jardim Tropical</option>
+              <option>Jardim Tropical II</option>
+              <option>Karajás Sul</option>
+              <option>Liberdade I</option>
+              <option>Liberdade II</option>
+              <option>Linha Verde</option>
+              <option>Loteamento Ipê</option>
+              <option>Maranhão</option>
+              <option>Maranhão II</option>
+              <option>Montes Claros</option>
+              <option>Nova Carajás</option>
+              <option>Nova Vida</option>
+              <option>Nova Vida II</option>
+              <option>Novo Brasil</option>
+              <option>Novo Horizonte</option>
+              <option>Novo Tempo</option>
+              <option>Novo Viver</option>
+              <option>Palmares II</option>
+              <option>Palmares Sul</option>
+              <option>Parque dos Carajás I</option>
+              <option>Panorama</option>
+              <option>Parque das Nações</option>
+              <option>Parque das Nações II</option>
+              <option>Polo Moveleiro</option>
+              <option>Primavera</option>
+              <option>Residencial Alto Boa Vista</option>
+              <option>Residencial Alto Bonito</option>
+              <option>Residencial Bambuí</option>
+              <option>Residencial Brasília</option>
+              <option>Residencial Morada Nova</option>
+              <option>Residencial Martini</option>
+              <option>Residencial Porto Seguro</option>
+              <option>Residencial Rio Verde</option>
+              <option>Residencial Vale do Sol</option>
+              <option>Residencial Vila Nova</option>
+              <option>Residencial Vista do Vale</option>
+              <option>Rio Verde</option>
+              <option>São José</option>
+              <option>São Lucas</option>
+              <option>São Lucas II</option>
+              <option>São Luíz</option>
+              <option>Serra Azul</option>
+              <option>Talismã</option>
+              <option>Vale dos Carajás</option>
+              <option>Vida Nova</option>
+              <option>Vida Nova II</option>
+              <option>Vila Carimã</option>
+              <option>Vila Rica</option>
+              <option>União</option>
+            </select>
+          </label>
+        </div>
       
       <!-- Campos específicos para Trabalhador -->
       <div class="worker-fields">
@@ -463,8 +550,34 @@
     // Inicializa a lista de serviços selecionados
     renderSelectedServices();
     
-    // Validação do formulário e envio
+        // Validação do formulário e envio
     const btnNext = document.querySelector('.btn-next');
+    const neighborhoodSelect = document.querySelector('select[name="neighborhood"]');
+
+    // Adicionar classe visual quando o campo não for válido
+    neighborhoodSelect.addEventListener('change', function() {
+      if (this.value === '') {
+        this.classList.add('input-invalid');
+        
+        // Remover qualquer mensagem de erro existente
+        const existingError = this.parentNode.querySelector('.error-message');
+        if (existingError) existingError.remove();
+        
+        // Adicionar mensagem de erro
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'error-message';
+        errorMessage.textContent = 'Por favor, selecione um bairro';
+        this.parentNode.appendChild(errorMessage);
+      } else {
+        this.classList.remove('input-invalid');
+        this.classList.add('input-valid');
+        
+        // Remover mensagem de erro se existir
+        const existingError = this.parentNode.querySelector('.error-message');
+        if (existingError) existingError.remove();
+      }
+    });
+
     btnNext.addEventListener('click', function(e) {
       // Efeito visual de ripple
       let posX = e.offsetX;
@@ -484,6 +597,30 @@
       setTimeout(() => {
         rippleEffect.remove();
       }, 500);
+      
+      // Validar o campo de bairro
+      if (neighborhoodSelect.value === '') {
+        neighborhoodSelect.classList.add('input-invalid');
+        neighborhoodSelect.classList.add('shake');
+        
+        // Adicionar mensagem de erro se não existir
+        if (!neighborhoodSelect.parentNode.querySelector('.error-message')) {
+          const errorMessage = document.createElement('div');
+          errorMessage.className = 'error-message';
+          errorMessage.textContent = 'Por favor, selecione um bairro';
+          neighborhoodSelect.parentNode.appendChild(errorMessage);
+        }
+        
+        // Rolar até o campo com erro
+        neighborhoodSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Remover animação de shake após a conclusão
+        setTimeout(() => {
+          neighborhoodSelect.classList.remove('shake');
+        }, 600);
+        
+        return; // Impedir o envio do formulário
+      }
       
       // Validação para modo trabalhador - precisa ter pelo menos um serviço selecionado
       if (currentMode === 'trabalhador' && selectedServices.length === 0) {
