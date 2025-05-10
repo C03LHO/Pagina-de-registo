@@ -181,7 +181,7 @@
 
   <script>
     // Lista de serviços disponíveis
-      const availableServices = [
+    const availableServices = [
       // DOMÉSTICOS E DIÁRIOS
       "Diarista",
       "Lavadeira de Roupas",
@@ -410,8 +410,37 @@
       }
     });
 
+    // Função para validar CPF
+    function isValidCPF(cpf) {
+      cpf = cpf.replace(/[^\d]+/g, ''); // Remove caracteres não numéricos
+      if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false; // Verifica tamanho e sequência repetida
+
+      let sum = 0;
+      let remainder;
+
+      // Valida primeiro dígito verificador
+      for (let i = 1; i <= 9; i++) {
+        sum += parseInt(cpf[i - 1]) * (11 - i);
+      }
+      remainder = (sum * 10) % 11;
+      if (remainder === 10 || remainder === 11) remainder = 0;
+      if (remainder !== parseInt(cpf[9])) return false;
+
+      // Valida segundo dígito verificador
+      sum = 0;
+      for (let i = 1; i <= 10; i++) {
+        sum += parseInt(cpf[i - 1]) * (12 - i);
+      }
+      remainder = (sum * 10) % 11;
+      if (remainder === 10 || remainder === 11) remainder = 0;
+      if (remainder !== parseInt(cpf[10])) return false;
+
+      return true;
+    }
+
     // Máscara para CPF
-    document.querySelector('input[name="cpf"]').addEventListener('input', function(e) {
+    const cpfInput = document.querySelector('input[name="cpf"]');
+    cpfInput.addEventListener('input', function(e) {
       let value = e.target.value.replace(/\D/g, '');
       if (value.length > 11) value = value.slice(0, 11);
       
@@ -424,6 +453,29 @@
       }
       
       e.target.value = value;
+
+      // Validação em tempo real
+      if (value.length === 14) { // Formato completo com máscara
+        if (isValidCPF(value)) {
+          e.target.classList.remove('input-invalid');
+          e.target.classList.add('input-valid');
+          const existingError = e.target.parentNode.querySelector('.error-message');
+          if (existingError) existingError.remove();
+        } else {
+          e.target.classList.add('input-invalid');
+          e.target.classList.remove('input-valid');
+          const existingError = e.target.parentNode.querySelector('.error-message');
+          if (existingError) existingError.remove();
+          const errorMessage = document.createElement('div');
+          errorMessage.className = 'error-message';
+          errorMessage.textContent = 'CPF inválido';
+          e.target.parentNode.appendChild(errorMessage);
+        }
+      } else {
+        e.target.classList.remove('input-valid', 'input-invalid');
+        const existingError = e.target.parentNode.querySelector('.error-message');
+        if (existingError) existingError.remove();
+      }
     });
 
     // Máscara para telefone
@@ -550,7 +602,7 @@
     // Inicializa a lista de serviços selecionados
     renderSelectedServices();
     
-        // Validação do formulário e envio
+    // Validação do formulário e envio
     const btnNext = document.querySelector('.btn-next');
     const neighborhoodSelect = document.querySelector('select[name="neighborhood"]');
 
@@ -598,6 +650,24 @@
         rippleEffect.remove();
       }, 500);
       
+      // Validar o CPF
+      const cpfValue = cpfInput.value;
+      if (!isValidCPF(cpfValue)) {
+        cpfInput.classList.add('input-invalid');
+        cpfInput.classList.add('shake');
+        if (!cpfInput.parentNode.querySelector('.error-message')) {
+          const errorMessage = document.createElement('div');
+          errorMessage.className = 'error-message';
+          errorMessage.textContent = 'CPF inválido';
+          cpfInput.parentNode.appendChild(errorMessage);
+        }
+        cpfInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+          cpfInput.classList.remove('shake');
+        }, 600);
+        return;
+      }
+      
       // Validar o campo de bairro
       if (neighborhoodSelect.value === '') {
         neighborhoodSelect.classList.add('input-invalid');
@@ -637,5 +707,5 @@
       alert('Registro enviado com sucesso!');
     });
   </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93d55ee1a9ab44e3',t:'MTc0NjgzNzQ3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
