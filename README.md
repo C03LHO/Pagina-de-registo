@@ -113,15 +113,6 @@ Os estilos podem ser modificados no arquivo `style.css`. As principais variávei
 }
 ```
 
-## 🔮 Próximos Passos (Roadmap)
-
-- [ ] Integração com backend para persistência de dados
-- [ ] Sistema de autenticação
-- [ ] Página de busca de serviços para clientes
-- [ ] Perfis detalhados de trabalhadores
-- [ ] Sistema de avaliação e feedback
-- [ ] Geolocalização para serviços próximos
-
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
